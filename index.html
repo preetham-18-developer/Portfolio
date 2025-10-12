@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html> 
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -3048,10 +3048,37 @@
             </p>
           </article>
         </div>
-      </div>
-    </section>
+              </div>
 
-    <!-- CONTACT -->
+
+      <div class="container">
+        <div class="certifications" >
+          <article class="certification reveal">
+            <div class="cert__header">
+              <div class="cert__icon">
+                <img src="./Google-Cloud-Emblem.png" width="50px" />
+              </div>
+              <h4 class="cert__title">
+                <a
+                  href="./Simplilearn Certificate.pdf"
+                  target="_blank"
+                  class="cert-link"
+                >
+                  INTRODUCTION TO GENERATIVE AI STUDIO - GOOGLE CLOUD(OCT 2025)
+                </a>
+              </h4>
+            </div>
+            <p class="cert__desc">
+              Gained foundational knowledge of Generative Ai concepts and tools,
+              including AI studio features and solutions for text , image ,and data.
+            </p>
+          </article>
+        </div>
+              </div>
+                  </section>
+
+
+<!--CONTACT-->
     <section id="contact" class="section">
       <div class="container">
         <div class="section__header reveal">
@@ -3061,15 +3088,10 @@
 
         <div class="contact">
           <form
-            name="contact"
-            method="POST"
-            data-netlify="true"
             id="contactForm"
             class="contact__form reveal"
             novalidate
           >
-            <input type="hidden" name="form-name" value="contact" />
-
             <div class="field">
               <label for="name">Full Name</label>
               <input
@@ -3158,6 +3180,12 @@
         </div>
       </div>
     </section>
+
+
+    
+
+
+
 
     <!-- FOOTER -->
     <footer class="footer">
@@ -3411,96 +3439,98 @@
           skillBars.forEach((bar) => skillObserver.observe(bar));
         }
 
-        // Enhanced contact form with Netlify integration
-        initializeContactForm() {
-          const form = document.getElementById("contactForm");
-          const statusEl = document.getElementById("formStatus");
+      initializeContactForm() {
+  const form = document.getElementById("contactForm");
+  const statusEl = document.getElementById("formStatus");
 
-          const setError = (id, message) => {
-            const errorEl = document.getElementById(`error-${id}`);
-            if (errorEl) {
-              errorEl.textContent = message || "";
-              errorEl.style.display = message ? "block" : "none";
-            }
-          };
+  if (!form || !statusEl) return;
 
-          const validateForm = () => {
-            let isValid = true;
-            const name = document.getElementById("name");
-            const email = document.getElementById("email");
-            const subject = document.getElementById("subject");
-            const message = document.getElementById("message");
+  form.addEventListener("submit", function(e) {
+    e.preventDefault();
+    e.stopPropagation();
 
-            // Clear previous errors
-            ["name", "email", "subject", "message"].forEach((field) =>
-              setError(field, "")
-            );
+    // Clear status
+    statusEl.textContent = "";
+    statusEl.className = "form__status";
 
-            // Name validation
-            if (!name.value.trim()) {
-              setError("name", "Please enter your name");
-              isValid = false;
-            }
+    // Get form values
+    const nameInput = document.getElementById("name");
+    const emailInput = document.getElementById("email");
+    const subjectInput = document.getElementById("subject");
+    const messageInput = document.getElementById("message");
 
-            // Email validation
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!email.value.match(emailRegex)) {
-              setError("email", "Please enter a valid email address");
-              isValid = false;
-            }
+    const name = nameInput ? nameInput.value.trim() : "";
+    const email = emailInput ? emailInput.value.trim() : "";
+    const subject = subjectInput ? subjectInput.value.trim() : "";
+    const message = messageInput ? messageInput.value.trim() : "";
 
-            // Subject validation
-            if (!subject.value.trim()) {
-              setError("subject", "Please add a subject");
-              isValid = false;
-            }
+    // Simple validation
+    if (!name || !email || !subject || !message) {
+      statusEl.textContent = "⚠️ Please fill all fields";
+      statusEl.className = "form__status status--error";
+      return false;
+    }
 
-            // Message validation
-            if (message.value.trim().length < 10) {
-              setError("message", "Message should be at least 10 characters");
-              isValid = false;
-            }
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      statusEl.textContent = "⚠️ Please enter a valid email";
+      statusEl.className = "form__status status--error";
+      return false;
+    }
 
-            return isValid;
-          };
+    // Message length validation
+    if (message.length < 10) {
+      statusEl.textContent = "⚠️ Message should be at least 10 characters";
+      statusEl.className = "form__status status--error";
+      return false;
+    }
 
-          form.addEventListener("submit", async (e) => {
-            e.preventDefault();
+    // Show sending message
+    statusEl.textContent = "📤 Sending message...";
+    statusEl.className = "form__status";
 
-            statusEl.textContent = "";
-            statusEl.className = "form__status";
+    // Prepare form data for Web3Forms
+    const formData = new FormData();
+    formData.append("access_key", "7808a944-4542-40d9-a8f9-2290de4a2216");
+    formData.append("name", name);
+    formData.append("email", email);
+    formData.append("subject", subject);
+    formData.append("message", message);
+    formData.append("from_name", name);
+    formData.append("replyto", email);
 
-            if (!validateForm()) return;
+    // Send to Web3Forms
+    fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      body: formData
+    })
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(data) {
+      if (data.success) {
+        statusEl.textContent = "✅ Message sent successfully! I'll get back to you soon.";
+        statusEl.className = "form__status status--success";
+        form.reset();
+        
+        // Clear success message after 5 seconds
+        setTimeout(function() {
+          statusEl.textContent = "";
+          statusEl.className = "form__status";
+        }, 5000);
+      } else {
+        throw new Error("Form submission failed");
+      }
+    })
+    .catch(function(error) {
+      statusEl.textContent = "❌ Failed to send. Please email: preethamgoud2006@gmail.com";
+      statusEl.className = "form__status status--error";
+    });
 
-            const formData = new FormData(form);
-
-            try {
-              statusEl.textContent = "Sending message...";
-              statusEl.className = "form__status";
-
-              const response = await fetch("/", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/x-www-form-urlencoded",
-                },
-                body: new URLSearchParams(formData).toString(),
-              });
-
-              if (response.ok) {
-                statusEl.textContent =
-                  "✅ Message sent successfully! I'll get back to you soon.";
-                statusEl.className = "form__status status--success";
-                form.reset();
-              } else {
-                throw new Error("Network response was not ok");
-              }
-            } catch (error) {
-              statusEl.textContent =
-                "❌ Failed to send message. Please try again or email me directly at preethamgoud2006@gmail.com";
-              statusEl.className = "form__status status--error";
-            }
-          });
-        }
+    return false;
+  });
+}
 
         // Typewriter effect for hero subtitle
         initializeTypewriter() {
@@ -3560,8 +3590,7 @@
           footerText.innerHTML = `© ${year} Preetham Goud | Built with ❤️ using JavaScript, CSS`;
         }
       });
-    
-  
+     
     
     </script>
   </body>
